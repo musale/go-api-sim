@@ -23,9 +23,10 @@ def send_sms(num, msg):
 
 if __name__ == '__main__':
     import sys
+    import json
     try:
         num, msg = sys.argv[1], sys.argv[2]
     except Exception:
         print "Usage: %s <phone> <message>" % (sys.argv[0])
     else:
-        print send_sms(num, msg)
+        print json.loads(send_sms(num, msg))

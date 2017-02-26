@@ -78,10 +78,12 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 
 	for _, number := range strings.Split(destinaton, ",") {
 		var rec Recipient
-		valid, num := phone.IsValid(number)
+
 		cost := 0.0
 		status := "Failed"
 		messageID := "None"
+
+		valid, num := phone.IsValid(number)
 		if valid == false {
 			status = "Invalid Phone Number"
 		} else if inBlacklist(number) == true {
