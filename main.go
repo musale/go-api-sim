@@ -20,10 +20,10 @@ func main() {
 		return
 	}
 
-	logFile, openErr1 := os.OpenFile(os.Getenv("LOG_DIR"), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+	logFile, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 
-	if openErr1 != nil {
-		log.Println("Uh oh! Could not open log file.", openErr1)
+	if err != nil {
+		log.Println("Log file error: ", err)
 	}
 
 	defer logFile.Close()
