@@ -51,7 +51,7 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 	for _, number := range strings.Split(destinaton, ",") {
 		valid, num := phone.IsValid(number)
 		if valid == false {
-
+			return
 		}
 	}
 
