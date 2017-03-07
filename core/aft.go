@@ -100,6 +100,8 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		rec.MessageId = messageID
 		recipients = append(recipients, rec)
 	}
+	utils.Logger.Println("AFT Message: ", message)
+	utils.Logger.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
 
 	msg := "Sent to 1/7 Total Cost: KES 500"
 

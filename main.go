@@ -33,5 +33,6 @@ func main() {
 	// Route set up
 	http.HandleFunc("/aft", core.ATPage)
 	http.HandleFunc("/routesms", core.RMPage)
+
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }

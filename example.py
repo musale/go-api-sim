@@ -3,7 +3,7 @@
 import urllib
 import urllib2
 
-url = "http://127.0.01:8027/"
+url = "http://127.0.01:4027/"
 key = "xxx-secret-api-key"
 username = "username"
 headers = {
@@ -26,7 +26,7 @@ def send_rms_sms(num, msg):
     load = {
         'username': username, 'destination': num,
         'message': msg, 'source': 'Test', 'password': 'pass',
-        'dlr': '0', 'typ': '1',
+        'dlr': 1, 'type': 0,
     }
     request = urllib2.Request(
         url + 'routesms', urllib.urlencode(load), headers)
@@ -35,12 +35,11 @@ def send_rms_sms(num, msg):
 
 if __name__ == '__main__':
     import sys
-    # import json
+    import json
     try:
         num, msg = sys.argv[1], sys.argv[2]
     except Exception:
         print "Usage: %s <phone> <message>" % (sys.argv[0])
     else:
-        # print json.loads(send_sms(num, msg))
-        # print json.loads(send_rms_sms(num, msg))
+        print json.loads(send_sms(num, msg))['SMSMessageData']
         print send_rms_sms(num, msg)

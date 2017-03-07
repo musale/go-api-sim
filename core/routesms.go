@@ -1,13 +1,12 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/etowett/go-api-sim/phone"
+	"github.com/etowett/go-api-sim/utils"
 )
 
 type RMResponse struct {
@@ -28,26 +27,14 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 	dlr := r.FormValue("dlr")
 	typ := r.FormValue("type")
 
-	if message == "" || len(message) == 0 {
-		log.Println("No message")
+	if password == "" || len(password) == 0 || username == "" ||
+		len(username) == 0 || from == "" || len(from) == 0 ||
+		destinaton == "" || len(destinaton) == 0 || message == "" ||
+		len(message) == 0 || dlr == "" || len(dlr) == 0 ||
+		typ == "" || len(typ) == 0 {
 		fmt.Fprintf(w, "1702\n")
 		return
 	}
-
-	if from == "" || len(from) == 0 {
-		log.Println("No from")
-		fmt.Fprintf(w, "1702\n")
-		return
-	}
-
-	// if password == "" || len(password) == 0 || username == "" ||
-	// 	len(username) == 0 || from == "" || len(from) == 0 ||
-	// 	destinaton == "" || len(destinaton) == 0 || message == "" ||
-	// 	len(message) == 0 || dlr == "" || len(dlr) == 0 ||
-	// 	typ == "" || len(typ) == 0 {
-	// 	fmt.Fprintf(w, "1702\n")
-	// 	return
-	// }
 
 	if validateUser(username, password) == false {
 		fmt.Fprintf(w, "1703.\n")
@@ -59,20 +46,28 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if dlr != "0" || dlr != "1" {
-		fmt.Fprintf(w, "1708.\n")
-		return
+	if dlr != "0" {
+		if dlr != "1" {
+			fmt.Fprintf(w, "1708.\n")
+			return
+		}
 	}
 
+	var data []string
 	for _, number := range strings.Split(destinaton, ",") {
 		valid, num := phone.IsValid(number)
+		var x string
 		if valid == false {
-			log.Println("valid false", valid)
+			x = "1706|" + number
+		} else {
+			x = "1701|" + num[1:] + utils.GetUUID()
 		}
-		log.Println("Number ", num)
+		data = append(data, x)
 	}
 
-	json.NewEncoder(w).Encode(AFTResponse{
-		Status: "success", Message: "Request Received",
-	})
+	utils.Logger.Println("RMS Message: ", message)
+	utils.Logger.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
+
+	fmt.Fprintf(w, strings.Join(data, ","))
+	return
 }
