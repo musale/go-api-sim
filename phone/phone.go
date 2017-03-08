@@ -26,9 +26,8 @@ func IsValid(num string) (bool, string) {
 }
 
 func isInternational(num string) (bool, string) {
-	if num[0:3] == "254" {
-		valid, n := isKenyan(num)
-		return valid, n
+	if num[1:4] == "254" {
+		return isKenyan(num)
 	} else {
 		pattern := "^+{1}[0-9]{7,13}$"
 		match, _ := regexp.MatchString(pattern, num)
@@ -40,24 +39,21 @@ func isInternational(num string) (bool, string) {
 }
 
 func isKenyan(n string) (bool, string) {
-	pattern := "^[0]{1}[7]{1}[0-9]{8}$|^[7]{1}[0-9]{8}$|^+254[7]{1}[0-9]{8}$|^254[7]{1}[0-9]{8}$"
+	pattern := "^[7]{1}[0-9]{8}$"
+
+	if n[0:1] == "+" || n[0:1] == "0" {
+		n = n[1:]
+	}
+	if n[0:3] == "254" {
+		n = n[3:]
+	}
+	if n[0:1] == "0" {
+		n = n[1:]
+	}
 	match, _ := regexp.MatchString(pattern, n)
 	if match == false {
 		return false, ""
 	}
-	if n[0:1] == "+" {
-		n = n[1:]
-	}
-	if n[0:3] != "254" {
-		if n[0:1] == "0" {
-			n = "254" + n[1:]
-		} else {
-			n = "254" + n
-		}
-	}
-	if len(n) != 12 {
-		return false, ""
-	}
-	num := "+" + n
+	num := "+254" + n
 	return true, num
 }

@@ -60,7 +60,7 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 		if valid == false {
 			x = "1706|" + number
 		} else {
-			x = "1701|" + num[1:] + utils.GetUUID()
+			x = "1701|" + num[1:] + "|" + utils.GetUUID()
 		}
 		data = append(data, x)
 	}
