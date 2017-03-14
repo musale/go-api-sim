@@ -3,19 +3,19 @@ package phone
 import (
 	"regexp"
 	"strings"
+
+	"github.com/etowett/go-api-sim/utils"
 )
 
 func IsValid(num string) (bool, string) {
+	var valid bool
 	bad := []string{"\t", "\n", " ", ",", "-", "(", ")", ".", "'", "\""}
 	if num == "" || len(num) < 2 {
 		return false, ""
 	}
-
 	for i := range bad {
 		num = strings.Replace(num, bad[i], "", -1)
 	}
-
-	var valid bool
 	var number string
 	if num[0:1] == "+" {
 		valid, number = isInternational(num)
@@ -29,8 +29,11 @@ func isInternational(num string) (bool, string) {
 	if num[1:4] == "254" {
 		return isKenyan(num)
 	} else {
-		pattern := "^+{1}[0-9]{7,13}$"
-		match, _ := regexp.MatchString(pattern, num)
+		match, err := regexp.MatchString("^\\+{1}[0-9]{7,15}$", num)
+		if err != nil {
+			utils.Logger.Println("regexp err ", err)
+			return false, ""
+		}
 		if match == false {
 			return false, ""
 		}

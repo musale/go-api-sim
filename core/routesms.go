@@ -37,18 +37,18 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if validateUser(username, password) == false {
-		fmt.Fprintf(w, "1703.\n")
+		fmt.Fprintf(w, "1703\n")
 		return
 	}
 
 	if typ != "0" {
-		fmt.Fprintf(w, "1704.\n")
+		fmt.Fprintf(w, "1704\n")
 		return
 	}
 
 	if dlr != "0" {
 		if dlr != "1" {
-			fmt.Fprintf(w, "1708.\n")
+			fmt.Fprintf(w, "1708\n")
 			return
 		}
 	}

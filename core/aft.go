@@ -35,7 +35,7 @@ type AFTResponse struct {
 
 func ATPage(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Server", "G-Starfish")
+	w.Header().Set("Server", "G-Leopard")
 	w.WriteHeader(200)
 
 	username := r.FormValue("username")
@@ -87,7 +87,7 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		if valid == false {
 			status = "Invalid Phone Number"
 		} else if inBlacklist(number) == true {
-			status = "User In Blacklist"
+			status = "User In BlackList"
 		} else {
 			number = num
 			status = "Success"
@@ -110,6 +110,7 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 			Message: msg, Recipients: recipients,
 		},
 	}
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ret)
 }
