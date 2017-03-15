@@ -1,0 +1,15 @@
+[Unit]
+Description=Go-Api-Sim Application
+
+[Service]
+ExecStart=/apps/go/fiesta/fiesta
+
+WorkingDirectory=/apps/go/fiesta/
+
+User=ekt
+Group=users
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
