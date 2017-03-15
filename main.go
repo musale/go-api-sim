@@ -22,7 +22,7 @@ func main() {
 	logFile, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 
 	if err != nil {
-		log.Fatal("Log file error: ", err)
+		log.Fatal("logfile eror: ", err)
 	}
 
 	defer logFile.Close()

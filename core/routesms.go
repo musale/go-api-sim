@@ -15,10 +15,6 @@ type RMResponse struct {
 }
 
 func RMPage(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Server", "G-Starfish")
-	w.WriteHeader(200)
-
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 	message := r.FormValue("message")
@@ -68,6 +64,8 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 	utils.Logger.Println("RMS Message: ", message)
 	utils.Logger.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
 
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Server", "G-Simulator")
 	fmt.Fprintf(w, strings.Join(data, ","))
 	return
 }

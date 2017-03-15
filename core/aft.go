@@ -34,10 +34,6 @@ type AFTResponse struct {
 }
 
 func ATPage(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Server", "G-Leopard")
-	w.WriteHeader(200)
-
 	username := r.FormValue("username")
 	destinaton := r.FormValue("to")
 	message := r.FormValue("message")
@@ -75,7 +71,8 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var recipients []Recipient
-
+	validCount := 0
+	totalCost := 0.0
 	for _, number := range strings.Split(destinaton, ",") {
 		var rec Recipient
 
@@ -93,6 +90,8 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 			status = "Success"
 			cost = getMesageCost(message, num)
 			messageID = utils.GetMD5Hash(time.Now().String() + number)
+			validCount += 1
+			totalCost += cost
 		}
 		rec.Status = status
 		rec.Cost = cost
@@ -103,13 +102,15 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 	utils.Logger.Println("AFT Message: ", message)
 	utils.Logger.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
 
-	msg := "Sent to 1/7 Total Cost: KES 500"
+	msg := fmt.Sprintf("Sent to %v/%v Total Cost: KES %v", validCount, len(recipients), totalCost)
 
 	ret := FinalResponse{
 		SMSMessageData: MessageData{
 			Message: msg, Recipients: recipients,
 		},
 	}
+
+	w.Header().Set("Server", "G-Simulator")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ret)

@@ -10,7 +10,7 @@ import (
 func IsValid(num string) (bool, string) {
 	var valid bool
 	bad := []string{"\t", "\n", " ", ",", "-", "(", ")", ".", "'", "\""}
-	if num == "" || len(num) < 2 {
+	if num == "" || len(num) < 5 {
 		return false, ""
 	}
 	for i := range bad {
