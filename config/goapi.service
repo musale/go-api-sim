@@ -2,9 +2,9 @@
 Description=Go-Api-Sim Application
 
 [Service]
-ExecStart=/apps/go/fiesta/fiesta
+ExecStart=/apps/go-api/goapi
 
-WorkingDirectory=/apps/go/fiesta/
+WorkingDirectory=/apps/go-api/
 
 User=ekt
 Group=users
