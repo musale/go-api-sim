@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -32,7 +33,7 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if validateUser(username, password) == false {
+	if !validateUser(username, password) {
 		fmt.Fprintf(w, "1703\n")
 		return
 	}
@@ -61,8 +62,8 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 		data = append(data, x)
 	}
 
-	utils.Logger.Println("RMS Message: ", message)
-	utils.Logger.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
+	log.Println("RMS Message: ", message)
+	log.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Server", "G-Simulator")

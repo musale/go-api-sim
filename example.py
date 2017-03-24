@@ -41,5 +41,5 @@ if __name__ == '__main__':
     except Exception:
         print "Usage: %s <phone> <message>" % (sys.argv[0])
     else:
-        print json.loads(send_sms(num, msg))['SMSMessageData']
+        print json.loads(send_sms(num, msg))
         print send_rms_sms(num, msg)

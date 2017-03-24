@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/etowett/go-api-sim/core"
-	"github.com/etowett/go-api-sim/utils"
 	"github.com/joho/godotenv"
 )
 
@@ -14,20 +13,22 @@ var err error
 
 func main() {
 
-	err := godotenv.Load()
+	err = godotenv.Load()
 	if err != nil {
 		log.Fatal(".env Error ", err)
 	}
 
-	logFile, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
-
+	f, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
-		log.Fatal("logfile eror: ", err)
+		log.Fatal("log file error: ", err)
 	}
+	defer f.Close()
 
-	defer logFile.Close()
+	myFile := log.New(f,
+		"PREFIX: ",
+		log.Ldate|log.Ltime|log.Lshortfile)
 
-	utils.Logger = log.New(logFile, "", log.Lshortfile|log.Ldate|log.Ltime)
+	log.SetOutput(myFile)
 
 	// Route set up
 	http.HandleFunc("/aft", core.ATPage)

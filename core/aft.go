@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -99,8 +100,8 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		rec.MessageId = messageID
 		recipients = append(recipients, rec)
 	}
-	utils.Logger.Println("AFT Message: ", message)
-	utils.Logger.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
+	log.Println("AFT Message: ", message)
+	log.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
 
 	msg := fmt.Sprintf("Sent to %v/%v Total Cost: KES %v", validCount, len(recipients), totalCost)
 
