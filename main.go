@@ -1,15 +1,20 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/etowett/go-api-sim/core"
+	"github.com/etowett/go-api-sim/utils"
 	"github.com/joho/godotenv"
 )
 
-var err error
+var (
+	err     error
+	logpath = flag.String("logpath", "/var/log/go-api/api.log", "Log Path")
+)
 
 func main() {
 
@@ -18,17 +23,21 @@ func main() {
 		log.Fatal(".env Error ", err)
 	}
 
-	f, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatal("log file error: ", err)
-	}
-	defer f.Close()
+	flag.Parse()
+	utils.NewLog(*logpath)
+	utils.Log.Println("hello there")
 
-	myFile := log.New(f,
-		"PREFIX: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
+	// f, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	// if err != nil {
+	// 	log.Fatal("log file error: ", err)
+	// }
+	// defer f.Close()
 
-	log.SetOutput(myFile)
+	// myFile := log.New(f,
+	// 	"PREFIX: ",
+	// 	log.Ldate|log.Ltime|log.Lshortfile)
+
+	// log.SetOutput(myFile)
 
 	// Route set up
 	http.HandleFunc("/aft", core.ATPage)

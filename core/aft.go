@@ -3,7 +3,6 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -82,16 +81,16 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		messageID := "None"
 
 		valid, num := phone.IsValid(number)
-		if valid == false {
+		if !valid {
 			status = "Invalid Phone Number"
-		} else if inBlacklist(number) == true {
+		} else if !inBlacklist(number) {
 			status = "User In BlackList"
 		} else {
 			number = num
 			status = "Success"
 			cost = getMesageCost(message, num)
 			messageID = utils.GetMD5Hash(time.Now().String() + number)
-			validCount += 1
+			validCount++
 			totalCost += cost
 		}
 		rec.Status = status
@@ -100,8 +99,8 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		rec.MessageId = messageID
 		recipients = append(recipients, rec)
 	}
-	log.Println("AFT Message: ", message)
-	log.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
+	utils.Log.Println("AFT Message: ", message)
+	utils.Log.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
 
 	msg := fmt.Sprintf("Sent to %v/%v Total Cost: KES %v", validCount, len(recipients), totalCost)
 

@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -62,8 +61,8 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 		data = append(data, x)
 	}
 
-	log.Println("RMS Message: ", message)
-	log.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
+	utils.Log.Println("RMS Message: ", message)
+	utils.Log.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Server", "G-Simulator")
