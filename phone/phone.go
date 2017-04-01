@@ -3,8 +3,6 @@ package phone
 import (
 	"regexp"
 	"strings"
-
-	"github.com/etowett/go-api-sim/utils"
 )
 
 func IsValid(num string) (bool, string) {
@@ -31,7 +29,6 @@ func isInternational(num string) (bool, string) {
 	} else {
 		match, err := regexp.MatchString("^\\+{1}[0-9]{7,15}$", num)
 		if err != nil {
-			utils.Logger.Println("regexp err ", err)
 			return false, ""
 		}
 		if match == false {

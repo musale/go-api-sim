@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -10,24 +11,33 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var err error
+var (
+	err     error
+	logpath = flag.String("logpath", "/var/log/go-api/api.log", "Log Path")
+)
 
 func main() {
 
-	err := godotenv.Load()
+	err = godotenv.Load()
 	if err != nil {
 		log.Fatal(".env Error ", err)
 	}
 
-	logFile, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+	flag.Parse()
+	utils.NewLog(*logpath)
+	utils.Log.Println("hello there")
 
-	if err != nil {
-		log.Fatal("logfile eror: ", err)
-	}
+	// f, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	// if err != nil {
+	// 	log.Fatal("log file error: ", err)
+	// }
+	// defer f.Close()
 
-	defer logFile.Close()
+	// myFile := log.New(f,
+	// 	"PREFIX: ",
+	// 	log.Ldate|log.Ltime|log.Lshortfile)
 
-	utils.Logger = log.New(logFile, "", log.Lshortfile|log.Ldate|log.Ltime)
+	// log.SetOutput(myFile)
 
 	// Route set up
 	http.HandleFunc("/aft", core.ATPage)
