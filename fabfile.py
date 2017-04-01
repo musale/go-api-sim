@@ -15,6 +15,9 @@ tmp_f = "%s/smsl.tar.gz" % tmp
 env.use_ssh_config = True
 env.hosts = ['smsl']
 
+def live():
+    
+
 
 def xdeploy():
     if os.path.exists(tmp):
