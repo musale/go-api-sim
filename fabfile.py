@@ -1,42 +1,21 @@
-"""Fabfile to deploy stuff."""
+#!/usr/bin/env python
 
-from fabric.api import env, cd, run, sudo, local, lcd, put
-from fabric.contrib.files import exists
-
-import os
-
-
-app_dir = '/apps/smsl'
-git_repo = 'git@bitbucket.org:teamictlife/smsleopard.git'
-
-tmp = "/tmp/sms"
-tmp_f = "%s/smsl.tar.gz" % tmp
+from fabric.api import env, cd, run, sudo
 
 env.use_ssh_config = True
-env.hosts = ['smsl']
+env.hosts = ["mpesa"]
+code_dir = "/home/ekt/go/src/github.com/etowett/go-api-sim/"
+install_dir = "/apps/goapi/"
 
-def live():
-    
 
-
-def xdeploy():
-    if os.path.exists(tmp):
-        local('rm -rf %s' % tmp)
-    local('mkdir %s' % tmp)
-    with lcd(app_dir):
-        local('tar -czhf %s smsleopard --exclude=".git*"' % (tmp_f))
-    if exists(tmp):
-        run('rm -rf %s' % tmp)
-    run('mkdir %s' % tmp)
-    put(tmp_f, tmp_f)
-    with cd(app_dir):
-        if exists('smsleopard'):
-            run('rm -rf smsleopard')
-        run('tar -xzf %s' % tmp_f)
-        with cd('/var/log'):
-            if not exists('smsleopard'):
-                sudo('mkdir -p smsleopard/app')
-                sudo('chown -R %s:%s smsleopard' % (user, user,))
-                run('touch smsleopard/app/smsleopard.log')
-    prep_remote()
-    restart_services()
+def deploy():
+    with cd(code_dir):
+        run("git pull origin master")
+        run("go build")
+        run("go install")
+    sudo("systemctl stop goapi")
+    with cd(install_dir):
+        run("rm goapi")
+        run("cp /home/ekt/go/bin/go-api-sim .")
+    sudo("systemctl start goapi")
+    return
