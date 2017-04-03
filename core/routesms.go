@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -15,6 +16,7 @@ type RMResponse struct {
 }
 
 func RMPage(w http.ResponseWriter, r *http.Request) {
+
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 	message := r.FormValue("message")
@@ -61,11 +63,10 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 		data = append(data, x)
 	}
 
-	utils.Log.Println("RMS Message: ", message)
-	utils.Log.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
+	log.Println("RMS Message: ", message)
+	log.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Server", "G-Simulator")
 	fmt.Fprintf(w, strings.Join(data, ","))
 	return
 }

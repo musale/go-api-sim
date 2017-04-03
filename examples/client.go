@@ -11,29 +11,29 @@ import (
 )
 
 const (
-	topupURL = "http://127.0.0.1:3008/topup"
+	aftURL = "http://127.0.0.1:4027/aft"
+	rmsURL = "http://127.0.0.1:4027/routesms"
 )
 
 func main() {
 
 	client := http.Client{}
 	form := url.Values{}
-	form.Add("account", getAccount())
-	form.Add("amount", getAmount())
-	form.Add("number", getPhone())
-	form.Add("trans_time", getTransTime())
+	form.Add("username", "etowett")
+	form.Add("message", "Hello world")
+	form.Add("to", "727328542")
+	form.Add("from", "Eutychus")
 	req, err := http.NewRequest(
-		"POST", topupURL, strings.NewReader(form.Encode()))
+		"POST", aftURL, strings.NewReader(form.Encode()))
 
 	if err != nil {
-		log.Println("newrqeuest error: ", err)
-		return
+		log.Fatal("Request Error: ", err)
 	}
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Content-Length", strconv.Itoa(len(form.Encode())))
 	req.Header.Add("Accept", "Application/json")
-	req.Header.Add("app-key", "1234#")
+	req.Header.Add("apikey", "1234#")
 
 	resp, err := client.Do(req)
 

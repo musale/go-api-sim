@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -34,6 +35,7 @@ type AFTResponse struct {
 }
 
 func ATPage(w http.ResponseWriter, r *http.Request) {
+
 	username := r.FormValue("username")
 	destinaton := r.FormValue("to")
 	message := r.FormValue("message")
@@ -88,7 +90,7 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		} else {
 			number = num
 			status = "Success"
-			cost = getMesageCost(message, num)
+			cost, _ = getMesageCost(message, num)
 			messageID = utils.GetMD5Hash(time.Now().String() + number)
 			validCount++
 			totalCost += cost
@@ -99,8 +101,8 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		rec.MessageId = messageID
 		recipients = append(recipients, rec)
 	}
-	utils.Log.Println("AFT Message: ", message)
-	utils.Log.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
+	log.Println("AFT Message: ", message)
+	log.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
 
 	msg := fmt.Sprintf("Sent to %v/%v Total Cost: KES %v", validCount, len(recipients), totalCost)
 
@@ -110,10 +112,10 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	w.Header().Set("Server", "G-Simulator")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ret)
+	return
 }
 
 func validateUser(username, key string) bool {
@@ -125,6 +127,6 @@ func inBlacklist(number string) bool {
 	return values[rand.Intn(len(values))]
 }
 
-func getMesageCost(message string, number string) float64 {
-	return 1.0
+func getMesageCost(message string, number string) (float64, error) {
+	return 1.0, nil
 }
