@@ -5,7 +5,7 @@ from fabric.api import env, cd, run, sudo, local, lcd, put
 from fabric.contrib.files import exists
 
 env.use_ssh_config = True
-env.hosts = ["mpesa"]
+env.hosts = ["sms"]
 
 code_dir = "/home/ekt/go/src/github.com/etowett/go-api-sim/"
 install_dir = "/apps/goapi/"
@@ -14,10 +14,6 @@ live_dir = "/home/focus/go/src/github.com/etowett/"
 tmp = "/tmp/goapi"
 tmp_f = "%s/goapi.tar.gz" % tmp
 user = "focus"
-
-
-def stage():
-    env.hosts = ["sms"]
 
 
 def deploy():
@@ -62,7 +58,7 @@ def setup():
         run("mkdir /home/focus/go")
         run("echo \"export GOPATH=$HOME/go\" >> /home/focus/.bashrc")
     run("go get github.com/etowett/go-api-sim")
-    with cd('%s/go-api-sim' % live_dir):
+    with cd('%sgo-api-sim' % live_dir):
         run('go get')
         run('go build')
         run('go install')
@@ -73,7 +69,7 @@ def setup():
         if not exists("goapi"):
             run("mkdir goapi")
         with cd("goapi"):
-            run("cp %s/go-api-sim/env.sample .env" % (live_dir,))
+            run("cp %sgo-api-sim/env.sample .env" % (live_dir,))
             run("cp /home/focus/go/bin/go-api-sim goapi")
     with cd("/var/log/"):
         if not exists("goapi"):
@@ -82,7 +78,7 @@ def setup():
         with cd("goapi"):
             run("touch goapi.log")
     sudo(
-        "cp %s/go-api-sim/config/goapi.service "
+        "cp %sgo-api-sim/config/goapi.service "
         "/etc/systemd/system/goapi.service" % (live_dir,)
     )
     restart_goapi()

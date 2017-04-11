@@ -82,8 +82,8 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		status := "Failed"
 		messageID := "None"
 
-		valid, num := phone.IsValid(number)
-		if !valid {
+		num, err := phone.CheckValid(number)
+		if err != nil {
 			status = "Invalid Phone Number"
 		} else if !inBlacklist(number) {
 			status = "User In BlackList"

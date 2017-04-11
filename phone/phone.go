@@ -1,26 +1,33 @@
 package phone
 
 import (
+	"errors"
 	"regexp"
 	"strings"
 )
 
-func IsValid(num string) (bool, string) {
-	var valid bool
+// CheckValid returns whether phone is valid
+func CheckValid(num string) (string, error) {
 	bad := []string{"\t", "\n", " ", ",", "-", "(", ")", ".", "'", "\""}
 	if num == "" || len(num) < 5 {
-		return false, ""
+		return "", errors.New("number too short")
 	}
 	for i := range bad {
 		num = strings.Replace(num, bad[i], "", -1)
 	}
 	var number string
 	if num[0:1] == "+" {
-		valid, number = isInternational(num)
+		number, err = isInternational(num)
+		if err != nil {
+			return "", err
+		}
 	} else {
-		valid, number = isKenyan(num)
+		number, err = isKenyan(num)
+		if err != nil {
+			return "", err
+		}
 	}
-	return valid, number
+	return number, nil
 }
 
 func isInternational(num string) (bool, string) {
