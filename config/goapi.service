@@ -2,12 +2,12 @@
 Description=Go-Api-Sim Application
 
 [Service]
-ExecStart=/apps/go-api/goapi
+ExecStart=/apps/goapi/goapi
 
-WorkingDirectory=/apps/go-api/
+WorkingDirectory=/apps/goapi/
 
-User=ekt
-Group=users
+User=focus
+Group=focus
 
 Restart=always
 
