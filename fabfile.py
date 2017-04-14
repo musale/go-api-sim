@@ -1,8 +1,8 @@
 
-import os
-
-from fabric.api import env, cd, run, sudo, local, lcd, put
+from fabric.colors import green, red
 from fabric.contrib.files import exists
+from fabric.api import env, cd, run, sudo
+from fabric.contrib.project import rsync_project
 
 env.use_ssh_config = True
 env.hosts = ["sms"]
@@ -31,23 +31,26 @@ def deploy():
 
 
 def xdeploy():
-    if os.path.exists(tmp):
-        local('rm -rf %s' % tmp)
-    local('mkdir %s' % tmp)
-    with lcd(local_dir):
-        local('tar -czhf %s go-api-sim --exclude=".git*"' % (tmp_f))
-    if exists(tmp):
-        run('rm -rf %s' % tmp)
-    run('mkdir %s' % tmp)
-    put(tmp_f, tmp_f)
-    with cd(live_dir):
-        if exists('go-api-sim'):
-            run('rm -rf go-api-sim')
-        run('tar -xzf %s' % tmp_f)
-    with cd('%s/go-api-sim' % live_dir):
+    rsync_project(
+        live_dir, local_dir='%sgo-api-sim' % local_dir,
+        exclude=['*.pyc', '.git*'], delete=True
+    )
+    with cd('%sgo-api-sim' % live_dir):
+        print(green("get dependencies if any"))
         run('go get')
+        print(green("build"))
         run('go build')
+        print(green("install new"))
         run('go install')
+    print(red("stop goapi"))
+    stop_goapi()
+    with cd(install_dir):
+        if exists("goapi"):
+            print(red("remove old goapi"))
+            run("rm goapi")
+        print(green("copy new goapi"))
+        run("cp /home/focus/go/bin/go-api-sim goapi")
+    print(green("start service"))
     restart_goapi()
     return
 
@@ -57,7 +60,10 @@ def setup():
     if not exists("/home/focus/go"):
         run("mkdir /home/focus/go")
         run("echo \"export GOPATH=$HOME/go\" >> /home/focus/.bashrc")
-    run("go get github.com/etowett/go-api-sim")
+    rsync_project(
+        live_dir, local_dir='%sgo-api-sim' % local_dir,
+        exclude=['*.pyc', '.git*'], delete=True
+    )
     with cd('%sgo-api-sim' % live_dir):
         run('go get')
         run('go build')

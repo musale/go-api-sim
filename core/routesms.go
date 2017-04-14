@@ -53,9 +53,9 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 
 	var data []string
 	for _, number := range strings.Split(destinaton, ",") {
-		valid, num := phone.IsValid(number)
+		num, err := phone.CheckValid(number)
 		var x string
-		if valid == false {
+		if err != nil {
 			x = "1706|" + number
 		} else {
 			x = "1701|" + num[1:] + "|" + utils.GetUUID()

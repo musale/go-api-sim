@@ -8,6 +8,7 @@ import (
 
 // CheckValid returns whether phone is valid
 func CheckValid(num string) (string, error) {
+	var err error
 	bad := []string{"\t", "\n", " ", ",", "-", "(", ")", ".", "'", "\""}
 	if num == "" || len(num) < 5 {
 		return "", errors.New("number too short")
@@ -30,22 +31,22 @@ func CheckValid(num string) (string, error) {
 	return number, nil
 }
 
-func isInternational(num string) (bool, string) {
+func isInternational(num string) (string, error) {
 	if num[1:4] == "254" {
 		return isKenyan(num)
 	} else {
 		match, err := regexp.MatchString("^\\+{1}[0-9]{7,15}$", num)
 		if err != nil {
-			return false, ""
+			return "", err
 		}
 		if match == false {
-			return false, ""
+			return "", errors.New("Rexexp not match")
 		}
 	}
-	return true, num
+	return num, nil
 }
 
-func isKenyan(n string) (bool, string) {
+func isKenyan(n string) (string, error) {
 	pattern := "^[7]{1}[0-9]{8}$"
 
 	if n[0:1] == "+" || n[0:1] == "0" {
@@ -59,8 +60,8 @@ func isKenyan(n string) (bool, string) {
 	}
 	match, _ := regexp.MatchString(pattern, n)
 	if match == false {
-		return false, ""
+		return "", errors.New("bad number")
 	}
 	num := "+254" + n
-	return true, num
+	return num, nil
 }
