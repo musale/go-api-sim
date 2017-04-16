@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/etowett/go-api-sim/core"
+	"github.com/etowett/go-api-sim/src"
 	"github.com/joho/godotenv"
 )
 
@@ -25,8 +25,8 @@ func main() {
 	log.SetOutput(f)
 
 	// Route set up
-	http.HandleFunc("/aft", core.ATPage)
-	http.HandleFunc("/routesms", core.RMPage)
+	http.HandleFunc("/aft", src.ATPage)
+	http.HandleFunc("/routesms", src.RMPage)
 
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }

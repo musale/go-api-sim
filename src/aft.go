@@ -1,4 +1,4 @@
-package core
+package src
 
 import (
 	"encoding/json"
@@ -13,6 +13,7 @@ import (
 	"github.com/etowett/go-api-sim/utils"
 )
 
+// Recipient single destination data
 type Recipient struct {
 	Number    string  `json:"number"`
 	Cost      float64 `json:"cost"`
@@ -20,20 +21,24 @@ type Recipient struct {
 	MessageId string  `json:"messageId"`
 }
 
+// MessageData
 type MessageData struct {
 	Message    string      `json:"Message"`
 	Recipients []Recipient `json:"Recipients"`
 }
 
+// FinalResponse format for final response
 type FinalResponse struct {
 	SMSMessageData MessageData `json:"SMSMessageData"`
 }
 
+// AFTResponse payload for response
 type AFTResponse struct {
 	Message string `json:"message"`
 	Status  string `json:"status"`
 }
 
+// ATPage handler for AT request
 func ATPage(w http.ResponseWriter, r *http.Request) {
 
 	username := r.FormValue("username")

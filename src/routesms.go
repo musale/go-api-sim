@@ -1,4 +1,4 @@
-package core
+package src
 
 import (
 	"fmt"
@@ -10,11 +10,13 @@ import (
 	"github.com/etowett/go-api-sim/utils"
 )
 
+// RMResponse response
 type RMResponse struct {
 	Message string `json:"message"`
 	Status  string `json:"status"`
 }
 
+// RMPage endpoint to rm request
 func RMPage(w http.ResponseWriter, r *http.Request) {
 
 	username := r.FormValue("username")
