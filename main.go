@@ -26,7 +26,8 @@ func main() {
 
 	// Route set up
 	http.HandleFunc("/aft", src.ATPage)
-	http.HandleFunc("/routesms", src.RMPage)
+    http.HandleFunc("/routesms", src.RMPage)
+	http.HandleFunc("/saf", src.SafPage)
 
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }
