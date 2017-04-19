@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/etowett/go-api-sim/utils"
 )
 
 var senderIDResponse = `
@@ -23,6 +25,17 @@ var senderIDResponse = `
             </ns1:ServiceException>
          </detail>
       </soapenv:Fault>
+   </soapenv:Body>
+</soapenv:Envelope>
+`
+
+var successResponse = `
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Body>
+      <ns1:sendSmsResponse xmlns:ns1="http://www.csapi.org/schema/parlayx/sms/send/v2_2/local">
+         <ns1:result>%s</ns1:result>
+      </ns1:sendSmsResponse>
    </soapenv:Body>
 </soapenv:Envelope>
 `
@@ -82,12 +95,29 @@ func SafPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	faultCode := "SVC0002"
-	faultString := "SenderName or senderAddress is unknown!"
-	retResponse := fmt.Sprintf(
-		senderIDResponse, faultCode, faultString, faultCode, faultString,
-		req.ReqBody.SenderID,
+	reqBody := req.ReqBody
+	load := fmt.Sprintf(
+		"SenderID: %s, Phone: %s, Message: %s", reqBody.SenderID,
+		reqBody.Number, reqBody.Message,
 	)
+	log.Println(load)
+
+	senderIDs := []string{"FOCUSMOBILE", "Eutychus", "SMSLEOPARD"}
+
+	if utils.InArray(reqBody.SenderID, senderIDs) {
+		faultCode := "SVC0002"
+		faultString := "SenderName or senderAddress is unknown!"
+		retResponse := fmt.Sprintf(
+			senderIDResponse, faultCode, faultString, faultCode, faultString,
+			req.ReqBody.SenderID,
+		)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "text/xml; charset=UTF-8")
+		w.Write([]byte(retResponse))
+		return
+	}
+	msgID := "100001200501170419072620015931"
+	retResponse := fmt.Sprintf(successResponse, msgID)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "text/xml; charset=UTF-8")
 	w.Write([]byte(retResponse))

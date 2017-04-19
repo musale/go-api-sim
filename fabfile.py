@@ -5,12 +5,9 @@ from fabric.api import env, cd, run, sudo
 from fabric.contrib.project import rsync_project
 
 env.use_ssh_config = True
-code_dir = "/home/ekt/go/src/github.com/etowett/go-api-sim/"
 install_dir = "/apps/goapi/"
 local_dir = "/home/ekt/go/src/github.com/etowett/"
 live_dir = "/home/focus/go/src/github.com/etowett/"
-tmp = "/tmp/goapi"
-tmp_f = "%s/goapi.tar.gz" % tmp
 user = "focus"
 
 
