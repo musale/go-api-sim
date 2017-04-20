@@ -101,7 +101,7 @@ func SafPage(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/xml; charset=UTF-8")
 		w.Write([]byte(fmt.Sprintf(
 			senderIDResponse, faultCode, faultString, faultCode, faultString,
-			reqBody.SenderID, faultString, reqBody.SenderID,
+			reqBody.SenderID,
 		)))
 		return
 	}

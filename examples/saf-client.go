@@ -60,6 +60,7 @@ type SuccessEnvelope struct {
 	} `xml:"Body"`
 }
 
+// SIDEnvelope payload body
 type SIDEnvelope struct {
 	SIDBody struct {
 		SIDFault struct {
