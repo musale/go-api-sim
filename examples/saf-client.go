@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	SMS_URL   = "http://192.168.122.31:4027/saf"
+	SMS_URL   = "http://goapi.local/saf"
 	SMS_QUERY = `
 <?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:loc="http://www.csapi.org/schema/parlayx/sms/send/v2_2/local" xmlns:v2="http://www.huawei.com.cn/schema/common/v2_1">
@@ -44,6 +44,7 @@ const (
 `
 )
 
+// Response return
 type Response struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
@@ -52,8 +53,8 @@ type Response struct {
 
 // SuccessEnvelope payload body
 type SuccessEnvelope struct {
-	Body struct {
-		SMSResponse struct {
+	SuccessBody struct {
+		SuccessResponse struct {
 			Result string `xml:"result"`
 		} `xml:"sendSmsResponse"`
 	} `xml:"Body"`
@@ -62,13 +63,15 @@ type SuccessEnvelope struct {
 type SIDEnvelope struct {
 	SIDBody struct {
 		SIDFault struct {
-			FaultCode        string `xml:"faultcode"`
-			FaultString      string `xml:"faultstring"`
-			ServiceException struct {
-				MessageID string `xml:"messageId"`
-				Text      string `xml:"text"`
-				Variables string `xml:"variables"`
-			} `xml:"ServiceException"`
+			FaultCode   string `xml:"faultcode"`
+			FaultString string `xml:"faultstring"`
+			Detail      struct {
+				ServiceException struct {
+					MessageID string `xml:"messageId"`
+					Text      string `xml:"text"`
+					Variables string `xml:"variables"`
+				} `xml:"ServiceException"`
+			} `xml:"detail"`
 		} `xml:"Fault"`
 	} `xml:"Body"`
 }
@@ -83,7 +86,8 @@ func main() {
 	serviceID := "122122122122122"
 	linkID := "123456"
 
-	senderName := "FOCUSMOBILE"
+	senderName := "HolyHigh"
+	// senderName := "FOCUSMOBILE"
 	destNum := "254715458745"
 	message := "Hello world!"
 
@@ -112,6 +116,16 @@ func main() {
 		log.Println("success unmarshal error: ", err)
 		return
 	}
-	log.Println("Response: ", env)
+	result := env.SuccessBody.SuccessResponse.Result
+	if len(result) < 1 {
+		var sid SIDEnvelope
+		if err := xml.Unmarshal(b, &sid); err != nil {
+			log.Println("sid unmarshal error: ", err)
+			return
+		}
+		log.Println("Response: ", sid)
+	} else {
+		log.Println("Response: ", env)
+	}
 	return
 }

@@ -20,8 +20,8 @@ var senderIDResponse = `
          <detail>
             <ns1:ServiceException xmlns:ns1="http://www.csapi.org/schema/parlayx/common/v2_1">
                <messageId>%s</messageId>
-               <text>SenderName or senderAddress is unknown!</text>
-               <variables>FOCUSMOBILE</variables>
+               <text>%s</text>
+               <variables>%s</variables>
             </ns1:ServiceException>
          </detail>
       </soapenv:Fault>
@@ -101,7 +101,7 @@ func SafPage(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/xml; charset=UTF-8")
 		w.Write([]byte(fmt.Sprintf(
 			senderIDResponse, faultCode, faultString, faultCode, faultString,
-			reqBody.SenderID,
+			reqBody.SenderID, faultString, reqBody.SenderID,
 		)))
 		return
 	}
