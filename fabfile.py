@@ -27,8 +27,7 @@ def deploy():
         run("go install")
     stop_goapi()
     with cd(install_dir):
-        run("rm goapi")
-        run("cp /home/ekt/go/bin/go-api-sim goapi")
+        run("rm goapi;cp /home/ekt/go/bin/go-api-sim goapi")
     restart_goapi()
     return
 
@@ -42,17 +41,14 @@ def xdeploy():
         print(green("get dependencies if any"))
         run('go get')
         print(green("build"))
-        run('go build')
+        run('go build -i')
         print(green("install new"))
         run('go install')
     print(red("stop goapi"))
     stop_goapi()
     with cd(install_dir):
-        if exists("goapi"):
-            print(red("remove old goapi"))
-            run("rm goapi")
-        print(green("copy new goapi"))
-        run("cp /home/focus/go/bin/go-api-sim goapi")
+        print(red("remove old goapi and copy new"))
+        run("rm goapi;cp /home/focus/go/bin/go-api-sim goapi")
     print(green("start service"))
     restart_goapi()
     return
