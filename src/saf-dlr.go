@@ -10,7 +10,39 @@ import (
 	"github.com/etowett/go-api-sim/utils"
 )
 
-// SafDLRPage endpoint to rm request
+var dlrResponse = `
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Body>
+      <ns1:getSmsDeliveryStatusResponse xmlns:ns1="http://www.csapi.org/schema/parlayx/sms/send/v2_2/local">
+         <ns1:result>
+            <address>tel:%s</address>
+            <deliveryStatus>%s</deliveryStatus>
+         </ns1:result>
+      </ns1:getSmsDeliveryStatusResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+`
+
+type DLREnvelope struct {
+	Header struct {
+		SOAPHeader struct {
+			SPID       string `xml:"spId"`
+			SPPAssword string `xml:"spPassword"`
+			ServiceID  string `xml:"serviceId"`
+			TimeStamp  string `xml:"timeStamp"`
+			OA         string `xml:"OA"`
+			FA         string `xml:"FA"`
+		} `xml:"RequestSOAPHeader"`
+	} `xml:"Header"`
+	Body struct {
+		DLRStatus struct {
+			RequestID string `xml:"requestIdentifier"`
+		} `xml:"getSmsDeliveryStatus"`
+	} `xml:"Body"`
+}
+
+// SafDLRPage endpoint to dlr status query
 func SafDLRPage(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -21,7 +53,7 @@ func SafDLRPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req SMSEnvelope
+	var req DLREnvelope
 	if err := xml.Unmarshal(body, &req); err != nil {
 		log.Println("Xml unmarshal: ", err)
 		w.Header().Set("Content-Type", "text/xml; charset=UTF-8")
@@ -29,28 +61,14 @@ func SafDLRPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reqBody := req.SMSReqBody.RequestBody
+	reqID := req.DLREnvelope.Body.DLRStatus.RequestID
+	number := req.Header.SOAPHeader.OA
 	log.Println(fmt.Sprintf(
-		"Request:: SenderID: %s, Phone: %s, Message: %s", reqBody.SenderID,
-		reqBody.Number, reqBody.Message,
-	))
+		"Get status for ID: %s, Phone: %s", reqID, number))
 
-	senderIDs := []string{"FOCUSMOBILE", "Eutychus", "SMSLEOPARD"}
-
-	if !utils.InArray(reqBody.SenderID, senderIDs) {
-		faultCode := "SVC0002"
-		faultString := "SenderName or senderAddress is unknown!"
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "text/xml; charset=UTF-8")
-		w.Write([]byte(fmt.Sprintf(
-			senderIDResponse, faultCode, faultString, faultCode, faultString,
-			reqBody.SenderID,
-		)))
-		return
-	}
-	msgID := "100001200501170419072620015931"
+	status := "DeliveredToTerminal"
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "text/xml; charset=UTF-8")
-	w.Write([]byte(fmt.Sprintf(successResponse, msgID)))
+	w.Write([]byte(fmt.Sprintf(dlrResponse, number, status)))
 	return
 }
