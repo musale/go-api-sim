@@ -10,68 +10,8 @@ import (
 	"github.com/etowett/go-api-sim/utils"
 )
 
-var senderIDResponse = `
-<?xml version="1.0" encoding="UTF-8"?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <soapenv:Body>
-      <soapenv:Fault>
-         <faultcode>%s</faultcode>
-         <faultstring>%s</faultstring>
-         <detail>
-            <ns1:ServiceException xmlns:ns1="http://www.csapi.org/schema/parlayx/common/v2_1">
-               <messageId>%s</messageId>
-               <text>%s</text>
-               <variables>%s</variables>
-            </ns1:ServiceException>
-         </detail>
-      </soapenv:Fault>
-   </soapenv:Body>
-</soapenv:Envelope>
-`
-
-var successResponse = `
-<?xml version="1.0" encoding="UTF-8"?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <soapenv:Body>
-      <ns1:getSmsDeliveryStatusResponse xmlns:ns1="http://www.csapi.org/schema/parlayx/sms/send/v2_2/local">
-         <ns1:result>
-            <address>tel:254722123456</address>
-            <deliveryStatus>DeliveredToTerminal</deliveryStatus>
-         </ns1:result>
-      </ns1:getSmsDeliveryStatusResponse>
-   </soapenv:Body>
-</soapenv:Envelope>
-`
-
-// SMSEnvelope payload
-type SMSEnvelope struct {
-	SMSReqHeader struct {
-		RequestHeader struct {
-			SpID       string `xml:"spId"`
-			SpPassword string `xml:"spPassword"`
-			ServiceID  string `xml:"serviceId"`
-			TimeStamp  string `xml:"timeStamp"`
-			LinkID     string `xml:"linkid"`
-			OA         string `xml:"OA"`
-			FA         string `xml:"FA"`
-		} `xml:"RequestSOAPHeader"`
-	} `xml:"Header"`
-	SMSReqBody struct {
-		RequestBody struct {
-			Number   string `xml:"addresses"`
-			SenderID string `xml:"senderName"`
-			Message  string `xml:"message"`
-			RRequest struct {
-				EndPoint   string `xml:"endpoint"`
-				IntName    string `xml:"interfaceName"`
-				Correlator string `xml:"correlator"`
-			} `xml:"receiptRequest"`
-		} `xml:"sendSms"`
-	} `xml:"Body"`
-}
-
-// SafPage endpoint to rm request
-func SafPage(w http.ResponseWriter, r *http.Request) {
+// SafDLRPage endpoint to rm request
+func SafDLRPage(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {

@@ -6,8 +6,8 @@ from fabric.contrib.project import rsync_project
 
 env.use_ssh_config = True
 install_dir = "/apps/goapi/"
-local_dir = "/home/ekt/go/src/github.com/etowett/"
-live_dir = "/home/focus/go/src/github.com/etowett/"
+local_dir = "/home/ekt/go/src/github.com/etowett/go-api-sim/"
+live_dir = "/home/focus/go/src/github.com/etowett/go-api-sim/"
 user = "focus"
 
 
@@ -15,8 +15,12 @@ def stage():
     env.hosts = ["sms"]
 
 
+def live():
+    env.hosts = ["sdp"]
+
+
 def deploy():
-    with cd("%s/go-api-sim/" % (live_dir,)):
+    with cd(live_dir):
         run("git pull origin master")
         run("go get")
         run("go build")
@@ -31,10 +35,10 @@ def deploy():
 
 def xdeploy():
     rsync_project(
-        live_dir, local_dir='%sgo-api-sim' % local_dir,
+        live_dir, local_dir=local_dir,
         exclude=['*.pyc', '.git*'], delete=True
     )
-    with cd('%sgo-api-sim' % live_dir):
+    with cd(live_dir):
         print(green("get dependencies if any"))
         run('go get')
         print(green("build"))
@@ -59,11 +63,8 @@ def setup():
     if not exists("/home/focus/go"):
         run("mkdir /home/focus/go")
         run("echo \"export GOPATH=$HOME/go\" >> /home/focus/.bashrc")
-    rsync_project(
-        live_dir, local_dir='%sgo-api-sim' % local_dir,
-        exclude=['*.pyc', '.git*'], delete=True
-    )
-    with cd('%sgo-api-sim' % live_dir):
+    run("go get github.com/etowett/go-api-sim")
+    with cd(live_dir):
         run('go get')
         run('go build')
         run('go install')
@@ -74,7 +75,7 @@ def setup():
         if not exists("goapi"):
             run("mkdir goapi")
         with cd("goapi"):
-            run("cp %sgo-api-sim/env.sample .env" % (live_dir,))
+            run("cp %senv.sample .env" % (live_dir,))
             run("cp /home/focus/go/bin/go-api-sim goapi")
     with cd("/var/log/"):
         if not exists("goapi"):
@@ -83,7 +84,7 @@ def setup():
         with cd("goapi"):
             run("touch goapi.log")
     sudo(
-        "cp %sgo-api-sim/config/goapi.service "
+        "cp %sconfig/goapi.service "
         "/etc/systemd/system/goapi.service" % (live_dir,)
     )
     restart_goapi()
