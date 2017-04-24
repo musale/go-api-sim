@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/etowett/go-api-sim/utils"
 )
 
 var dlrResponse = `
@@ -61,8 +59,11 @@ func SafDLRPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reqID := req.DLREnvelope.Body.DLRStatus.RequestID
+	reqID := req.Body.DLRStatus.RequestID
 	number := req.Header.SOAPHeader.OA
+	if number[0:4] == "tel:" {
+		number = number[4:]
+	}
 	log.Println(fmt.Sprintf(
 		"Get status for ID: %s, Phone: %s", reqID, number))
 

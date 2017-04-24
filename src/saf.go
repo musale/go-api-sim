@@ -78,8 +78,6 @@ func SafPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Given: ", string(body))
-
 	var req SMSEnvelope
 	if err := xml.Unmarshal(body, &req); err != nil {
 		log.Println("Xml unmarshal: ", err)
@@ -95,10 +93,6 @@ func SafPage(w http.ResponseWriter, r *http.Request) {
 	))
 
 	senderIDs := []string{"FOCUSMOBILE", "Eutychus", "SMSLEOPARD", "601947"}
-
-	log.Println("in array", utils.InArray(reqBody.SenderID, senderIDs))
-	log.Println("sid: ", reqBody.SenderID)
-	log.Println("array: ", senderIDs)
 
 	if !utils.InArray(reqBody.SenderID, senderIDs) {
 		faultCode := "SVC0002"
