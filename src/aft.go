@@ -15,10 +15,10 @@ import (
 
 // Recipient single destination data
 type Recipient struct {
-	Number    string  `json:"number"`
-	Cost      float64 `json:"cost"`
-	Status    string  `json:"status"`
-	MessageId string  `json:"messageId"`
+	Number    string `json:"number"`
+	Cost      string `json:"cost"`
+	Status    string `json:"status"`
+	MessageID string `json:"messageId"`
 }
 
 // MessageData
@@ -101,25 +101,23 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 			totalCost += cost
 		}
 		rec.Status = status
-		rec.Cost = cost
+		rec.Cost = fmt.Sprintf("%.2f", cost)
 		rec.Number = number
-		rec.MessageId = messageID
+		rec.MessageID = messageID
 		recipients = append(recipients, rec)
 	}
 	log.Println("AFT Message: ", message)
 	log.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
 
-	msg := fmt.Sprintf("Sent to %v/%v Total Cost: KES %v", validCount, len(recipients), totalCost)
-
-	ret := FinalResponse{
+	msg := fmt.Sprintf(
+		"Sent to %v/%v Total Cost: KES %v", validCount, len(recipients), totalCost)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(FinalResponse{
 		SMSMessageData: MessageData{
 			Message: msg, Recipients: recipients,
 		},
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ret)
+	})
 	return
 }
 
