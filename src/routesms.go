@@ -16,6 +16,15 @@ type RMResponse struct {
 	Status  string `json:"status"`
 }
 
+// RMRequest request
+type RMRequest struct {
+	Destinaton string
+	Message    string
+}
+
+var RMReqChan = make(chan RMRequest, 200)
+var RMResChan = make(chan []string, 200)
+
 // RMPage endpoint to rm request
 func RMPage(w http.ResponseWriter, r *http.Request) {
 
@@ -53,8 +62,19 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	go func() {
+		RMReqChan <- RMRequest{Message: message, Destinaton: destinaton}
+	}()
+	recs := <-RMResChan
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, strings.Join(recs, ","))
+	return
+}
+
+func ProcessRMReq(req *RMRequest) []string {
 	var data []string
-	for _, number := range strings.Split(destinaton, ",") {
+	for _, number := range strings.Split(req.Destinaton, ",") {
 		num, err := phone.CheckValid(number)
 		var x string
 		if err != nil {
@@ -64,11 +84,7 @@ func RMPage(w http.ResponseWriter, r *http.Request) {
 		}
 		data = append(data, x)
 	}
-
-	log.Println("RMS Message: ", message)
-	log.Println("RMS Recipients: ", len(strings.Split(destinaton, ",")))
-
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, strings.Join(data, ","))
-	return
+	log.Println("RMS Message: ", req.Message)
+	log.Println("RMS Recipients: ", len(strings.Split(req.Destinaton, ",")))
+	return data
 }

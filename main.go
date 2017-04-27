@@ -25,6 +25,7 @@ func main() {
 	log.SetOutput(f)
 
 	spinATWorkers()
+	spinRMWorkers()
 
 	// Route set up
 	http.HandleFunc("/aft", src.ATPage)
@@ -37,9 +38,20 @@ func main() {
 func spinATWorkers() {
 	for i := 0; i < 20; i++ {
 		go func() {
-			for req := range utils.ATChan {
+			for req := range src.ATReqChan {
 				result := src.ProcessATReq(&req)
-				utils.ATResult <- result
+				src.ATResChan <- result
+			}
+		}()
+	}
+}
+
+func spinRMWorkers() {
+	for i := 0; i < 20; i++ {
+		go func() {
+			for req := range src.RMReqChan {
+				result := src.ProcessRMReq(&req)
+				src.RMResChan <- result
 			}
 		}()
 	}

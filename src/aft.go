@@ -38,6 +38,15 @@ type AFTResponse struct {
 	Status  string `json:"status"`
 }
 
+// ATRequest request
+type ATRequest struct {
+	Destinaton string
+	Message    string
+}
+
+var ATReqChan = make(chan ATRequest, 200)
+var ATResChan = make(chan MessageData, 200)
+
 // ATPage handler for AT request
 func ATPage(w http.ResponseWriter, r *http.Request) {
 
@@ -78,12 +87,11 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	go func() {
-		utils.ATChan <- ATRequest{
-			Destinaton: Number, Message: message,
+		ATReqChan <- ATRequest{
+			Destinaton: destinaton, Message: message,
 		}
 	}()
-
-	smsData := <-utils.ATResult
+	smsData := <-ATResChan
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -109,7 +117,7 @@ func ProcessATReq(req *ATRequest) MessageData {
 		} else {
 			number = num
 			status = "Success"
-			cost, _ = getMesageCost(message, num)
+			cost, _ = getMesageCost(req.Message, num)
 			messageID = utils.GetMD5Hash(time.Now().String() + number)
 			validCount++
 			totalCost += cost

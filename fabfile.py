@@ -38,10 +38,10 @@ def xdeploy():
         exclude=['*.pyc', '.git*'], delete=True
     )
     with cd(live_dir):
-        print(green("get dependencies if any"))
-        run('go get')
+        # print(green("get dependencies if any"))
+        # run('go get')
         print(green("build"))
-        run('go build -i')
+        run('go build')
         print(green("install new"))
         run('go install')
     print(red("stop goapi"))
