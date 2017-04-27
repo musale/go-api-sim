@@ -24,10 +24,23 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.SetOutput(f)
 
+	spinATWorkers()
+
 	// Route set up
 	http.HandleFunc("/aft", src.ATPage)
 	http.HandleFunc("/routesms", src.RMPage)
 	http.HandleFunc("/saf", src.SafPage)
 	http.HandleFunc("/saf-dlr", src.SafDLRPage)
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
+}
+
+func spinATWorkers() {
+	for i := 0; i < 20; i++ {
+		go func() {
+			for req := range utils.ATChan {
+				result := src.ProcessATReq(&req)
+				utils.ATResult <- result
+			}
+		}()
+	}
 }

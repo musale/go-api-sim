@@ -7,6 +7,9 @@ import (
 	"fmt"
 )
 
+var ATChan = make(chan src.ATRequest, 200)
+var ATRequest = make(chan src.MessageData, 200)
+
 // GetMD5Hash returns MD5 hash for a given string
 func GetMD5Hash(text string) string {
 	hasher := md5.New()

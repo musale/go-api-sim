@@ -77,15 +77,29 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	go func() {
+		utils.ATChan <- ATRequest{
+			Destinaton: Number, Message: message,
+		}
+	}()
+
+	smsData := <-utils.ATResult
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(FinalResponse{smsData})
+	return
+}
+
+func ProcessATReq(req *ATRequest) MessageData {
 	var recipients []Recipient
 	validCount := 0
 	totalCost := 0.0
-	for _, number := range strings.Split(destinaton, ",") {
+	for _, number := range strings.Split(req.Destinaton, ",") {
 		var rec Recipient
-
-		cost := 0.0
-		status := "Failed"
-		messageID := "None"
+		var cost = 0.0
+		var status = "Failed"
+		var messageID = "None"
 
 		num, err := phone.CheckValid(number)
 		if err != nil {
@@ -106,19 +120,14 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		rec.MessageID = messageID
 		recipients = append(recipients, rec)
 	}
-	log.Println("AFT Message: ", message)
-	log.Println("AFT Recipients: ", len(strings.Split(destinaton, ",")))
+	log.Println("AFT Message: ", req.Message)
+	log.Println("AFT Recipients: ", len(strings.Split(req.Destinaton, ",")))
 
 	msg := fmt.Sprintf(
 		"Sent to %v/%v Total Cost: KES %v", validCount, len(recipients), totalCost)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(FinalResponse{
-		SMSMessageData: MessageData{
-			Message: msg, Recipients: recipients,
-		},
-	})
-	return
+	return MessageData{
+		Message: msg, Recipients: recipients,
+	}
 }
 
 func validateUser(username, key string) bool {
