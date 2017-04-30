@@ -9,35 +9,9 @@ import (
 	"net/http"
 )
 
-var senderIDResponse = `
-<?xml version="1.0" encoding="UTF-8"?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <soapenv:Body>
-      <soapenv:Fault>
-         <faultcode>%s</faultcode>
-         <faultstring>%s</faultstring>
-         <detail>
-            <ns1:ServiceException xmlns:ns1="http://www.csapi.org/schema/parlayx/common/v2_1">
-               <messageId>%s</messageId>
-               <text>%s</text>
-               <variables>%s</variables>
-            </ns1:ServiceException>
-         </detail>
-      </soapenv:Fault>
-   </soapenv:Body>
-</soapenv:Envelope>
-`
+var senderIDResponse = `<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><soapenv:Fault><faultcode>%s</faultcode><faultstring>%s</faultstring><detail><ns1:ServiceException xmlns:ns1="http://www.csapi.org/schema/parlayx/common/v2_1"><messageId>%s</messageId><text>%s</text><variables>%s</variables></ns1:ServiceException></detail></soapenv:Fault></soapenv:Body></soapenv:Envelope>`
 
-var successResponse = `
-<?xml version="1.0" encoding="UTF-8"?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <soapenv:Body>
-      <ns1:sendSmsResponse xmlns:ns1="http://www.csapi.org/schema/parlayx/sms/send/v2_2/local">
-         <ns1:result>%s</ns1:result>
-      </ns1:sendSmsResponse>
-   </soapenv:Body>
-</soapenv:Envelope>
-`
+var successResponse = `<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><ns1:sendSmsResponse xmlns:ns1="http://www.csapi.org/schema/parlayx/sms/send/v2_2/local"><ns1:result>%s</ns1:result></ns1:sendSmsResponse></soapenv:Body></soapenv:Envelope>`
 
 // SMSEnvelope payload
 type SMSEnvelope struct {

@@ -9,18 +9,7 @@ import (
 )
 
 var dlrResponse = `
-<?xml version="1.0" encoding="UTF-8"?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <soapenv:Body>
-      <ns1:getSmsDeliveryStatusResponse xmlns:ns1="http://www.csapi.org/schema/parlayx/sms/send/v2_2/local">
-         <ns1:result>
-            <address>tel:%s</address>
-            <deliveryStatus>%s</deliveryStatus>
-         </ns1:result>
-      </ns1:getSmsDeliveryStatusResponse>
-   </soapenv:Body>
-</soapenv:Envelope>
-`
+<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><ns1:getSmsDeliveryStatusResponse xmlns:ns1="http://www.csapi.org/schema/parlayx/sms/send/v2_2/local"><ns1:result><address>tel:%s</address><deliveryStatus>%s</deliveryStatus></ns1:result></ns1:getSmsDeliveryStatusResponse></soapenv:Body></soapenv:Envelope>`
 
 type DLREnvelope struct {
 	Header struct {

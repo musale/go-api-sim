@@ -86,11 +86,13 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		ATReqChan <- ATRequest{
-			Destinaton: destinaton, Message: message,
-		}
-	}()
+	req := ATRequest{
+		Destinaton: destinaton, Message: message,
+	}
+
+	go func(req ATRequest) {
+		ATReqChan <- req
+	}(req)
 
 	smsData := <-ATResChan
 
@@ -100,7 +102,8 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func ProcessATReq(req *ATRequest) MessageData {
+func ProcessATReq(req *ATRequest, i int) MessageData {
+	log.Println("worker: ", i)
 	var recipients []Recipient
 	validCount := 0
 	totalCost := 0.0

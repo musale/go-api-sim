@@ -38,18 +38,18 @@ func main() {
 }
 
 func spinATWorkers() {
-	for i := 0; i < 100; i++ {
-		go func() {
+	for i := 0; i < 3; i++ {
+		go func(i int) {
 			for req := range src.ATReqChan {
-				result := src.ProcessATReq(&req)
+				result := src.ProcessATReq(&req, i)
 				src.ATResChan <- result
 			}
-		}()
+		}(i)
 	}
 }
 
 func spinRMWorkers() {
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 10; i++ {
 		go func() {
 			for req := range src.RMReqChan {
 				result := src.ProcessRMReq(&req)
