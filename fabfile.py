@@ -24,6 +24,12 @@ def environment(arg):
     return user
 
 
+def dev():
+    """Musale local."""
+    # TODO: make this the default local host name
+    env.hosts = ["stag"]
+
+
 def stage():
     """Local host."""
     env.hosts = ["sms"]
