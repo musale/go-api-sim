@@ -11,7 +11,6 @@ install_dir = "/apps/goapi/"
 project_path = "/go/src/github.com/etowett/go-api-sim/"
 local_dir = "{0}{1}".format(os.getenv("HOME"), project_path)
 live_dir = "/home/{0}/go/src/github.com/etowett/go-api-sim/"
-install_dir = "/apps/genius/"
 
 
 def environment(arg):
@@ -50,10 +49,8 @@ def deploy(arg=None):
         run("go install")
     stop_goapi()
     with cd(install_dir):
-        run(
-            "rm goapi;cp {0}/go/bin/go-api-sim"
-            " goapi".format(os.getenv("HOME"))
-        )
+        run("rm goapi")
+        run("cp /home/{0}/go/bin/go-api-sim goapi".format(user))
     restart_goapi()
     return
 
@@ -74,7 +71,8 @@ def xdeploy(arg=None):
     stop_goapi()
     with cd(install_dir):
         print((red("remove old goapi and copy new")))
-        run("rm goapi;cp {0}/go/bin/go-api-sim goapi".format(user))
+        run("rm goapi")
+        run("cp /home/{0}/go/bin/go-api-sim goapi".format(user))
     print((green("start service")))
     restart_goapi()
     return
