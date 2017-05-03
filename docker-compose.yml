@@ -1,0 +1,8 @@
+version: '2'
+services:
+  goapi:
+    image: focusmobile/goapi:latest
+    ports:
+      - "4027:4027"
+    restart: always
+    privileged: true
