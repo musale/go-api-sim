@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
-
-	"github.com/etowett/go-api-sim/utils"
 )
 
 var senderIDResponse = `
@@ -92,9 +91,10 @@ func SafPage(w http.ResponseWriter, r *http.Request) {
 		reqBody.Number, reqBody.Message,
 	))
 
-	senderIDs := []string{"FOCUSMOBILE", "Eutychus", "SMSLEOPARD", "601947"}
+	// senderIDs := []string{"FOCUSMOBILE", "Eutychus", "SMSLEOPARD", "601947"}
 
-	if !utils.InArray(reqBody.SenderID, senderIDs) {
+	// if !utils.InArray(reqBody.SenderID, senderIDs) {
+	if !checkSID(reqBody.SenderID) {
 		faultCode := "SVC0002"
 		faultString := "SenderName or senderAddress is unknown!"
 		w.WriteHeader(http.StatusOK)
@@ -110,4 +110,9 @@ func SafPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/xml; charset=UTF-8")
 	w.Write([]byte(fmt.Sprintf(successResponse, msgID)))
 	return
+}
+
+func checkSID(sid string) bool {
+	var out = []bool{true, false}
+	return out[rand.Intn(len(out))]
 }

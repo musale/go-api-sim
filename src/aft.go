@@ -44,8 +44,8 @@ type ATRequest struct {
 	Message    string
 }
 
-var ATReqChan = make(chan ATRequest, 200)
-var ATResChan = make(chan MessageData, 200)
+var ATReqChan = make(chan ATRequest, 500)
+var ATResChan = make(chan MessageData, 500)
 
 // ATPage handler for AT request
 func ATPage(w http.ResponseWriter, r *http.Request) {
@@ -91,10 +91,11 @@ func ATPage(w http.ResponseWriter, r *http.Request) {
 			Destinaton: destinaton, Message: message,
 		}
 	}()
+
 	smsData := <-ATResChan
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(FinalResponse{smsData})
 	return
 }

@@ -16,7 +16,9 @@ func main() {
 		log.Fatal(".env Error ", err)
 	}
 
-	f, err := os.OpenFile(os.Getenv("LOG_FILE"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	f, err := os.OpenFile(
+		os.Getenv("LOG_FILE"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600,
+	)
 	if err != nil {
 		log.Fatal("Log file error: ", err)
 	}
@@ -36,7 +38,7 @@ func main() {
 }
 
 func spinATWorkers() {
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 250; i++ {
 		go func() {
 			for req := range src.ATReqChan {
 				result := src.ProcessATReq(&req)
@@ -47,7 +49,7 @@ func spinATWorkers() {
 }
 
 func spinRMWorkers() {
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 250; i++ {
 		go func() {
 			for req := range src.RMReqChan {
 				result := src.ProcessRMReq(&req)
