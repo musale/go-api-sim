@@ -44,8 +44,8 @@ type ATRequest struct {
 	Message    string
 }
 
-var ATReqChan = make(chan ATRequest, 500)
-var ATResChan = make(chan MessageData, 500)
+var ATReqChan = make(chan ATRequest, 1000)
+var ATResChan = make(chan MessageData, 1000)
 
 // ATPage handler for AT request
 func ATPage(w http.ResponseWriter, r *http.Request) {

@@ -38,7 +38,7 @@ func main() {
 }
 
 func spinATWorkers() {
-	for i := 0; i < 250; i++ {
+	for i := 0; i < 100; i++ {
 		go func() {
 			for req := range src.ATReqChan {
 				result := src.ProcessATReq(&req)
@@ -49,7 +49,7 @@ func spinATWorkers() {
 }
 
 func spinRMWorkers() {
-	for i := 0; i < 250; i++ {
+	for i := 0; i < 100; i++ {
 		go func() {
 			for req := range src.RMReqChan {
 				result := src.ProcessRMReq(&req)
