@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math/rand"
+	// "math/rand"
 	"net/http"
 )
 
@@ -113,6 +113,7 @@ func SafPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkSID(sid string) bool {
-	var out = []bool{true, false}
-	return out[rand.Intn(len(out))]
+	// var out = []bool{true, false}
+	// return out[rand.Intn(len(out))]
+	return true
 }
