@@ -15,7 +15,7 @@ live_dir = "/home/{0}/go/src/github.com/etowett/go-api-sim/"
 
 def environment(arg):
     """Get the project environment."""
-    if arg == "local":
+    if arg == "dev":
         user = "vagrant"
     else:
         user = "focus"
